@@ -1,8 +1,11 @@
-# print the track distributions for users and countries to txt files
+# print the track/artist distributions for users and countries to txt files
+# + print the track/artist - user matrix to scipy sparse matrix format
 # this script needs the LFM-1b_users.txt and LFM-1b_LEs.txt in a 'data' folder
 
 import pandas as pd
+import scipy.sparse
 import sys
+type = 'artist'
 
 # get user data
 pd_users = pd.read_csv('data/LFM-1b_users.txt', sep='\t')
@@ -41,7 +44,10 @@ with open('data/LFM-1b_LEs.txt', mode='r') as f:
         if user in pd_users.index:
             l_count += 1
             country = pd_users.loc[user]['country']
-            track = vals[3]
+            if type == 'track':
+                track = vals[3]
+            else:
+                track = vals[1]
             
             if user in user_dict:
                 u_dict = user_dict[user]
@@ -96,9 +102,9 @@ with open('data/user_dist.txt', mode='w') as f:
     for u, count in sorted_users:
         f.write(u + '\t' + str(count) + '\n')
 
-# print sorted track distribution
+# print sorted track/artist distribution
 sorted_tracks = sorted(track_dist.items(), key = lambda x:x[1], reverse = True)
-with open('data/track_dist.txt', mode='w') as f:
+with open('data/' + type + '_dist.txt', mode='w') as f:
     for t, count in sorted_tracks:
         f.write(t + '\t' + str(count) + '\n')
 
@@ -108,8 +114,8 @@ with open('data/country_dist.txt', mode='w') as f:
     for c, count in sorted_countries:
         f.write(c + '\t' + str(count) + '\n')
         
-# print sorted tracks-per-user distribution
-with open('data/user_track_dist.txt', mode='w') as f:
+# print sorted tracks/artists-per-user distribution
+with open('data/user_' + type + '_dist.txt', mode='w') as f:
     for u, u_dict in user_dict.items():
         f.write(u + '\t')
         sorted_users = sorted(u_dict.items(), key = lambda x:x[1], reverse = True)
@@ -117,8 +123,8 @@ with open('data/user_track_dist.txt', mode='w') as f:
             f.write(t + ' ' + str(count) + ';')
         f.write('\n')
 
-# print sorted tracks-per-country distribution
-with open('data/country_track_dist.txt', mode='w') as f:
+# print sorted tracks/artists-per-country distribution
+with open('data/country_' + type + '_dist.txt', mode='w') as f:
     for c, c_dict in country_dict.items():
         f.write(c + '\t')
         sorted_countries = sorted(c_dict.items(), key = lambda x:x[1], reverse = True)
@@ -134,3 +140,31 @@ with open('data/country_user_dist.txt', mode='w') as f:
         for t, count in sorted_countries:
             f.write(t + ' ' + str(count) + ';')
         f.write('\n')
+        
+# print the sparse matrix
+row = []
+col = []
+val = []
+
+with open('data/user_' + type + '_dist.txt') as f:
+    for line in f:
+        user, tracks = line.split('\t', 1)
+        for t_parts in tracks[:-2].split(';'):
+            track, count = t_parts.split(' ', 1)
+            row.append(int(user))
+            col.append(int(track))
+            val.append(int(count))
+
+print(len(row))
+print(len(col))
+print(len(val))
+sys.stdout.flush()
+
+sparse_matrix = scipy.sparse.coo_matrix((val, (row, col)))
+print(sparse_matrix.getnnz())
+sys.stdout.flush()
+
+scipy.sparse.save_npz('data/' + type + '_matrix.npz', sparse_matrix)
+test_matrix = scipy.sparse.load_npz('data/' + type + '_matrix.npz')
+print(test_matrix.getnnz())
+sys.stdout.flush()
