@@ -1,4 +1,4 @@
-# LFM_processing
+# LFM1b-analyses
 
 This repository provides Python scripts for processing and analyzing the LFM-1b dataset: http://www.cp.jku.at/datasets/LFM-1b/
 
