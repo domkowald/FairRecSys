@@ -1,2 +1,0 @@
-For interactions and user grouping use: https://zenodo.org/record/3475975#.XZ7erWbgpPZ
-For genre calculations use: http://www.cp.jku.at/datasets/LFM-1b/
