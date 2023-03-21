@@ -14,7 +14,7 @@ Datasets are available at: https://zenodo.org/record/6123879#.Yg-FRpYxmUk
 For executing the script, please copy the files into the "data" folder and follow the instructions in the notebook itself.
 
 ## RecSys_inconsistency.ipynb
-This I-python notebook enables to analyze inconsistency in recommender systems by evaluating accuracy, miscalibration and popularity lift. This work was accepted at ECIR'2023 and a pre-print will be available soon.
+This I-python notebook enables to analyze inconsistency in recommender systems by evaluating accuracy, miscalibration and popularity lift. This work was accepted at ECIR'2023 and is available via https://arxiv.org/pdf/2303.00400.pdf.
 
 For executing it, please download the datasets from https://doi.org/10.5281/zenodo.7428435 and copy the "lfm", "ml" and "anime" folders directly in the root folder of the notebook.
 
